@@ -80,8 +80,8 @@ func (c RedisCache) HGETALL(key string) (interface{}, error) {
 		return raw, nil
 	case string:
 		return []byte(raw), nil
-	case []interface{}:
-		return raw, nil
+	case interface{}:
+		return fmt.Sprintf("%v", raw), nil
 	case nil:
 		return nil, redis.ErrNil
 	case error:
