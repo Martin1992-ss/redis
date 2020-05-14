@@ -74,11 +74,12 @@ func (c RedisCache) HGETALL(key string) (string, error) {
 		return "conn.Do 出错:", err
 	}
 
-	item, err := redis.Bytes(raw, err)
+	// item, err := redis.Bytes(raw, err)
+	item, err := redis.String(raw,err)
 	if err != nil {
 		return "redis.Bytes 出错", err
 	}
-	return string(item), nil
+	return item, nil
 
 }
 
