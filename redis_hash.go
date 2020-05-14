@@ -1,6 +1,7 @@
 package redis_full
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/gomodule/redigo/redis"
@@ -74,12 +75,17 @@ func (c RedisCache) HGETALL(key string) (interface{}, error) {
 		return "conn.Do 出错:", err
 	}
 
-	// item, err := redis.Bytes(raw, err)
-	// item, err := redis.String(raw,err)
-	// if err != nil {
-	// 	return "redis.Bytes 出错", err
-	// }
-	return raw, nil
+	switch raw := raw.(type) {
+	case []byte:
+		return raw, nil
+	case string:
+		return []byte(raw), nil
+	case nil:
+		return nil, redis.ErrNil
+	case error:
+		return nil, raw
+	}
+	return nil, fmt.Errorf("unexpected type for Bytes, got type %T", raw)
 
 }
 
