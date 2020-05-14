@@ -58,7 +58,7 @@ func (c RedisCache) HGET(key, field string) (string, error) {
 
 }
 
-func (c RedisCache) HGETALL(key string) (interface{}, error) {
+func (c RedisCache) HGETALL(key string) (string, error) {
 	conn := c.pool.Get()
 	defer conn.Close()
 
@@ -77,17 +77,17 @@ func (c RedisCache) HGETALL(key string) (interface{}, error) {
 
 	switch raw := raw.(type) {
 	case []byte:
-		return raw, nil
+		return string(raw), nil
 	case string:
-		return []byte(raw), nil
+		return raw, nil
 	case interface{}:
 		return fmt.Sprintf("%v", raw), nil
 	case nil:
-		return nil, redis.ErrNil
+		return "", redis.ErrNil
 	case error:
-		return nil, raw
+		return "", raw
 	}
-	return nil, fmt.Errorf("unexpected type for Bytes, got type %T", raw)
+	return "", fmt.Errorf("unexpected type for Bytes, got type %T", raw)
 
 }
 
