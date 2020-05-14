@@ -71,7 +71,7 @@ func (c RedisCache) HGETALL(key string) (string, error) {
 
 	raw, err := conn.Do("HGETALL", key)
 	if err != nil {
-		return "", err
+		return "conn.Do 出错:", err
 	}
 
 	item, err := redis.Bytes(raw, err)
