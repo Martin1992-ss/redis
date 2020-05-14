@@ -57,7 +57,7 @@ func (c RedisCache) HGET(key, field string) (string, error) {
 
 }
 
-func (c RedisCache) HGETALL(key string) (string, error) {
+func (c RedisCache) HGETALL(key string) (interface{}, error) {
 	conn := c.pool.Get()
 	defer conn.Close()
 
@@ -75,11 +75,11 @@ func (c RedisCache) HGETALL(key string) (string, error) {
 	}
 
 	// item, err := redis.Bytes(raw, err)
-	item, err := redis.String(raw,err)
-	if err != nil {
-		return "redis.Bytes 出错", err
-	}
-	return item, nil
+	// item, err := redis.String(raw,err)
+	// if err != nil {
+	// 	return "redis.Bytes 出错", err
+	// }
+	return raw, nil
 
 }
 
