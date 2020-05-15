@@ -73,7 +73,7 @@ func (c RedisCache) GetJSON(key string, ptrValue interface{}) error {
 	return nil
 }
 
-func (c RedisCache) HGetJSON(key string, ptrValue interface{}) error {
+func (c RedisCache) HGetAllJSON(key string, ptrValue interface{}) error {
 	conn := c.pool.Get()
 	defer conn.Close()
 
@@ -85,7 +85,7 @@ func (c RedisCache) HGetJSON(key string, ptrValue interface{}) error {
 		return ErrCacheMiss
 	}
 
-	raw, err := conn.Do("HGET", key)
+	raw, err := conn.Do("HGETALL", key)
 	if err != nil {
 		return err
 	}
