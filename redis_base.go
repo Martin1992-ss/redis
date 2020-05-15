@@ -2,8 +2,9 @@ package redis_full
 
 import (
 	"encoding/json"
-	"github.com/gomodule/redigo/redis"
 	"time"
+
+	"github.com/gomodule/redigo/redis"
 )
 
 func (c RedisCache) SetJSON(key string, value interface{}, expires time.Duration) error {
@@ -57,6 +58,34 @@ func (c RedisCache) GetJSON(key string, ptrValue interface{}) error {
 	}
 
 	raw, err := conn.Do("GET", key)
+	if err != nil {
+		return err
+	}
+
+	item, err := redis.Bytes(raw, err)
+	if err != nil {
+		return err
+	}
+
+	if err := json.Unmarshal(item, &ptrValue); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (c RedisCache) HGetJSON(key string, ptrValue interface{}) error {
+	conn := c.pool.Get()
+	defer conn.Close()
+
+	ok, err := c.Exists(key)
+	if err != nil {
+		return err
+	}
+	if !ok {
+		return ErrCacheMiss
+	}
+
+	raw, err := conn.Do("HGET", key)
 	if err != nil {
 		return err
 	}
